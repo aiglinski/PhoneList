@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="import" href="admin.html">
+
+</head>
+
+<body>
+    <div>
+        <nav>
+            <div class="nav-wrapper teal">
+                <a href="#" class="brand-logo center">Phone List</a>
+
+            </div>
+        </nav>
+        <div class="container">
+            <form class="col s12" id="UserForm">
+                <div class="row">
+                    <div class="input-field col s12" style="padding-right: 50px;">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="name" type="text" value="" class="validate">
+                        <label for="name">Name</label>
+                    </div>
+                    <div class="input-field col s12" style="padding-right: 50px;">
+                        <i class="material-icons prefix">phone</i>
+                        <input id="phone" type="text" value="" class="validate">
+                        <label for="phone">Telephone</label>
+                    </div>
+                    <div class="input-field col s12" style="padding-right: 50px; padding-left: 50px">
+                        <select id="meeting">
+                            <option value="" disabled selected>Which meeting?</option>
+                            <option value="SNS">SNS</option>
+                            <option value="Commitment">Thursday Commitment</option>
+                            <option value="Young">Young Peoples</option>
+                        </select>
+
+                    </div>
+                    <p class="col s12 center-align">
+                        <label for="sponsor">
+                            <input type="checkbox" id="sponsor" value="false" onclick="logVal()" />
+                            <span>Can you sponsor?</span>
+                        </label>
+                    </p>
+
+                    <button class="btn waves-effect waves-light" id="submitBtn" type="submit" name="submit">Submit
+                    </button>
+                </div>
+        </div>
+        </form>
+    </div>
+
+    <style>
+        form {
+            margin-top: 20vh;
+        }
+
+        button {
+            display: block;
+            width: 80%;
+            margin: 10%;
+            margin-right: 10%;
+        }
+
+        .input-field {
+            padding-right: 50px;
+        }
+    </style>
+
+
+
+
+    <script src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+    <script>
+        let root = "http://localhost:5000";
+        M.AutoInit();
+
+        let checked = document.getElementById('sponsor');
+        const logVal = () => {
+            if (checked.value == "false") {
+                checked.setAttribute("value", true)
+            } else {
+                checked.setAttribute("value", false)
+            }
+            console.log(checked.value)
+        }
+
+        const postContact = async (contact) => {
+            const res = await fetch(`${root}/list`, {
+                method: "POST",
+                mode: "cors",
+                body: JSON.stringify(contact),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await (res);
+            console.log(data.status)
+            if (data.status == 200) {
+                M.toast({
+                    html: `Thank you, you were successfully added to the phone list.`
+                })
+            } else if (data.status == 500) {
+                M.toast({
+                    html: 'Ah shit. Something went wrong.'
+                })
+            }
+            console.log(data)
+        }
+        const validateNumber = (phone) => {
+            let ph = "";
+            // console.log(`validate called with ${phone}`)
+            let numArr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+            for (var i = 0; i < phone.length; i++) {
+                if (numArr.includes(phone[i])) {
+                    ph = ph.concat(phone[i])
+                }
+            }
+            console.log(ph);
+            return phAsNumber = Number(ph);
+        }
+
+        const logUser = e => {
+            // Alert('Validate phone and transform to pure numbers here');
+
+            e.preventDefault();
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let sponsor = checked.value;
+            let meeting = document.getElementById("meeting").value;
+            let p = window.location.pathname;
+            console.log(p)
+            if (name === 'Showme') {
+                window.location.href = "./admin.html";
+            }
+
+            validateNumber(phone);
+
+            let contact = {
+                name: name,
+                phone: phAsNumber,
+                sponsor: sponsor,
+                meeting: meeting
+            };
+            console.log(contact);
+            postContact(contact)
+
+            name.value = '';
+            phone.value = '';
+            sponsor.value = '';
+            meeting.value = '';
+        };
+        document.getElementById('submitBtn').addEventListener('click', (e) => logUser(e));
+    </script>
+
+</body>
+
+</html>

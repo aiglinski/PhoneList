@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <h3 class="center-align">Phone List</h3>
+        <ul>
+            <li></li>
+        </ul>
+        <div id="holder"></div>
+    </div>
+
+
+
+    <script>
+        let root = "http://localhost:5000";
+        window.onload = async () => {
+            console.log('getContacts called');
+            const res = await fetch(`${root}/list`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await (res.json());
+            console.log(data)
+            console.log(data.length)
+            let u = '<ul class="collection">';
+            data.forEach((contact) => {
+                u += '<li class="collection-item">' + contact.name + '<span class="right">' +
+                    contact.phone + '</span>' + '<li>'
+            })
+            u += '</ul>';
+            document.getElementById('holder').innerHTML = u
+
+        }
+    </script>
+</body>
+
+
+</html>
